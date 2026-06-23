@@ -26,8 +26,17 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Bloqueo estricto del prefijo del controlador
+                        // 1. Permitir acceso libre y público a Swagger y OpenAPI docs
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+
+                        // 2. Bloqueo estricto del prefijo del controlador de notificaciones
                         .requestMatchers("/api/notificaciones/**").authenticated()
+
+                        // 3. Cualquier otra ruta residual requerirá autenticación
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(gatewayHeaderFilter, UsernamePasswordAuthenticationFilter.class);

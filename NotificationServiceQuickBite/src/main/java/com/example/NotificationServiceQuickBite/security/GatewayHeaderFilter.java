@@ -1,6 +1,5 @@
 package com.example.NotificationServiceQuickBite.security;
 
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +18,13 @@ import java.util.List;
 @Slf4j
 @Component
 public class GatewayHeaderFilter extends OncePerRequestFilter {
+
+    // Evitamos que el filtro intercepte y ensucie los logs con las peticiones de Swagger
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs");
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
